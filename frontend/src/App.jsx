@@ -35,8 +35,10 @@ import {
   Sparkles,
 } from "lucide-react";
 
-// API Configuration
-const API_BASE = "/api";
+// API Configuration - uses env var in production, proxy in development
+const API_BASE = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api` 
+  : "/api";
 
 // Predefined baskets
 const BASKET_OPTIONS = {
