@@ -433,7 +433,8 @@ def run_optimization_pipeline(
     benchmark_returns: Optional[pd.Series] = None,
     optimization_method: str = 'bayesian',
     objective: str = 'sharpe',
-    n_iterations: int = 50
+    n_iterations: int = 50,
+    weight_method: str = 'mean_variance'
 ) -> Dict:
     """
     Complete optimization pipeline.
@@ -444,6 +445,7 @@ def run_optimization_pipeline(
         optimization_method: 'bayesian', 'multi_objective', or 'grid'
         objective: Optimization target metric
         n_iterations: Number of optimization iterations
+        weight_method: Initial weight optimization method
     
     Returns:
         Dictionary with optimization results
@@ -451,8 +453,17 @@ def run_optimization_pipeline(
     # Initialize engine
     engine = BasketTradingEngine(prices, benchmark_returns)
     
-    # Get initial weights using mean-variance optimization
-    initial_weights = engine.optimize_weights_mean_variance()
+    # Get initial weights using selected method
+    if weight_method == 'mean_variance':
+        initial_weights = engine.optimize_weights_mean_variance()
+    elif weight_method == 'risk_parity':
+        initial_weights = engine.optimize_weights_risk_parity()
+    elif weight_method == 'momentum':
+        initial_weights = engine.optimize_weights_momentum()
+    elif weight_method == 'min_variance':
+        initial_weights = engine.optimize_weights_minimum_variance()
+    else:
+        initial_weights = engine.optimize_weights_mean_variance()
     
     # Run optimization
     if optimization_method == 'bayesian':

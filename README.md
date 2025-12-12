@@ -92,63 +92,6 @@ SEARCH_SPACE = {
 - `return` - Maximize annualized return
 - `risk_adjusted` - Combined Sharpe + Sortino
 
-## 📊 Example Usage
-
-### Python API
-
-```python
-from backend.core import (
-    DataFetcher,
-    BasketTradingEngine,
-    BayesianStrategyOptimizer,
-    run_optimization_pipeline
-)
-
-# Fetch data
-fetcher = DataFetcher()
-basket_data = fetcher.fetch_basket_data(
-    ['AAPL', 'MSFT', 'GOOGL', 'AMZN'],
-    '2022-01-01',
-    '2024-01-01'
-)
-prices = fetcher.get_aligned_prices(basket_data)
-
-# Initialize engine
-engine = BasketTradingEngine(prices)
-
-# Get optimal weights
-weights = engine.optimize_weights_mean_variance()
-
-# Run Bayesian optimization
-optimizer = BayesianStrategyOptimizer(
-    engine=engine,
-    base_weights=weights,
-    objective='sharpe'
-)
-result = optimizer.optimize(n_calls=50)
-
-print(f"Best Sharpe: {result.best_score:.4f}")
-print(f"Best params: {result.best_params}")
-```
-
-### REST API
-
-```bash
-# Fetch data
-curl -X POST http://localhost:8000/api/data/fetch \
-  -H "Content-Type: application/json" \
-  -d '{"tickers": ["AAPL", "MSFT", "GOOGL"]}'
-
-# Run optimization
-curl -X POST http://localhost:8000/api/optimize/quick \
-  -H "Content-Type: application/json" \
-  -d '{
-    "tickers": ["AAPL", "MSFT", "GOOGL"],
-    "objective": "sharpe",
-    "n_iterations": 30
-  }'
-```
-
 ## How Bayesian Optimization Works
 
 1. **Initialization**: Sample random points in the parameter space
@@ -172,5 +115,3 @@ The algorithm efficiently explores the parameter space, balancing:
 | `consumer`     | Consumer goods       | WMT, PG, KO, PEP, COST, HD, MCD           |
 | `energy`       | Energy sector        | XOM, CVX, COP, SLB, EOG, MPC, PSX         |
 | `diversified`  | Cross-sector mix     | AAPL, JPM, JNJ, XOM, WMT, GOOGL, PG, UNH  |
-
-Built with Bayesian ML and lots of coffee

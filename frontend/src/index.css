@@ -129,16 +129,20 @@ body {
               0 0 20px rgba(99, 102, 241, 0.2);
 }
 
-/* Ticker tag */
+/* Date input styles */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) sepia(1) saturate(5) hue-rotate(200deg);
+  cursor: pointer;
+}
+
+/* Ticker tag (non-interactive) */
 .ticker-tag {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
   border: 1px solid rgba(99, 102, 241, 0.3);
-  transition: all 0.2s ease;
-}
-
-.ticker-tag:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(168, 85, 247, 0.4));
-  transform: scale(1.05);
 }
 
 /* Chart tooltip styles */

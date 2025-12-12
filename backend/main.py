@@ -61,6 +61,7 @@ class OptimizationRequest(BaseModel):
     objective: str = "sharpe"  # sharpe, sortino, calmar, return, risk_adjusted
     n_iterations: int = Field(default=50, ge=10, le=200)
     optimization_method: str = "bayesian"  # bayesian, multi_objective
+    weight_method: str = "mean_variance"  # mean_variance, risk_parity, momentum, min_variance
     initial_capital: float = Field(default=100000, ge=1000)
 
 
@@ -124,7 +125,8 @@ def run_optimization_sync(job_id: str, request: OptimizationRequest):
             benchmark_returns=benchmark_returns,
             optimization_method=request.optimization_method,
             objective=request.objective,
-            n_iterations=request.n_iterations
+            n_iterations=request.n_iterations,
+            weight_method=request.weight_method
         )
         
         optimization_jobs[job_id]['status'] = 'completed'
@@ -341,18 +343,20 @@ async def quick_optimization(request: OptimizationRequest):
         )
         benchmark_returns = benchmark_data['returns'] if not benchmark_data.empty else None
         
-        # Run with fewer iterations for quick results
+        # Run optimization with user-specified iterations
         result = run_optimization_pipeline(
             prices=prices,
             benchmark_returns=benchmark_returns,
             optimization_method=request.optimization_method,
             objective=request.objective,
-            n_iterations=min(request.n_iterations, 30)  # Cap at 30 for quick mode
+            n_iterations=request.n_iterations,
+            weight_method=request.weight_method
         )
         
         return {
             "tickers": request.tickers,
-            "result": result
+            "result": result,
+            "weight_method": request.weight_method
         }
         
     except Exception as e:
